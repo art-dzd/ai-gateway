@@ -1,0 +1,13 @@
+{
+  "defaults": {
+    "prompt_per_1k_rub": 0.0,
+    "completion_per_1k_rub": 0.0
+  },
+  "models": [
+    {
+      "match": ".*",
+      "prompt_per_1k_rub": 0.5,
+      "completion_per_1k_rub": 0.7
+    }
+  ]
+}

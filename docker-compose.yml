@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: gateway
+      POSTGRES_PASSWORD: gateway
+      POSTGRES_DB: gateway
+    ports:
+      - "127.0.0.1:5439:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "127.0.0.1:6389:6379"
+
+  api:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8010:8000"
+    depends_on:
+      - postgres
+      - redis
+    command: ["uvicorn", "ai_gateway.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  worker:
+    build:
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    command: ["celery", "-A", "ai_gateway.queue.celery_app.celery_app", "worker", "-l", "INFO"]
+
+volumes:
+  postgres_data:
